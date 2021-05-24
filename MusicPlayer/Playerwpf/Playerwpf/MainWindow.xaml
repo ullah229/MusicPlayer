@@ -1,0 +1,246 @@
+﻿<Window x:Name="Window" x:Class="Playerwpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Playerwpf"
+        mc:Ignorable="d"
+        Title="MusicPlayer" Height="489" Width="797.667" Icon="ApplicationFrameHost_LCB7OG6vic.png" ResizeMode="NoResize" WindowStyle="None" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown">
+    <Window.Background>
+        <ImageBrush/>
+    </Window.Background>
+    <Window.Resources>
+        <Storyboard x:Key="buttonAnim">
+            <ColorAnimation Storyboard.TargetName="_back" Storyboard.TargetProperty="Color" To="Transparent" />
+        </Storyboard>
+        <Image x:Key="Play" Source="playbtn.png" Height="45" Width="45" />
+        <Image x:Key="Pause" Source="pausebtn.png" Height="30" Width="30"/>
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="Blue" />
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.00001*" />
+                            </Grid.RowDefinitions>
+                            <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="True" Focusable="false">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" Style="{DynamicResource ScrollThumbs}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton x:Name="PageUp" Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
+                                </Track.IncreaseRepeatButton>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton x:Name="PageDown" Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
+                                </Track.DecreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="GridRoot" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="PART_Track" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Width" Value="Auto" />
+                                <Setter Property="Height" Value="8" />
+                                <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
+                                <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
+                                <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="Black" Margin="0,0,2,2">
+        <ListBox x:Name="Songlist" HorizontalAlignment="Left" Height="165" VerticalAlignment="Top" Width="735" Margin="32,80,0,0" MouseDoubleClick="Songlist_MouseDoubleClick" Foreground="White" BorderBrush="White" Background="Black" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.Style>
+                <Style TargetType="{x:Type ListBox}">
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="LightGray" />
+                            <Setter Property="Background" Value="LightGray" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.Style>
+        </ListBox>
+        <Label x:Name="Titlelbl" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="32,274,0,0" Foreground="White"/>
+        <Button x:Name="clearbtn" Content="Clear" HorizontalAlignment="Left" VerticalAlignment="Top" Width="59" Margin="382,339,0,0" Height="33" Click="clearbtn_Click" Background="Transparent" Foreground="White" BorderBrush="White">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="LightBlue" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Red" TargetName="Border" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button x:Name="songaddbutton" Content="+" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="55,332,0,0" Height="48" Click="Addbuttonclick" FontWeight="Bold" FontSize="25" BorderBrush="Black" Background="Black" Foreground="White" RenderTransformOrigin="0.973,0.528"/>
+        <Button x:Name="Stopbtn" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="24" Margin="262,343,0,0" Height="24" Click="StopButtonClick">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="LightBlue" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="red" TargetName="Border" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.Background>
+                <ImageBrush ImageSource="stopbtn.png">
+                    <ImageBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </ImageBrush.RelativeTransform>
+                </ImageBrush>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Skipbtn" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="39" Margin="308,339,0,0" Height="31" Click="skipbutton" Foreground="Black" BorderBrush="Transparent" BorderThickness="0">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.Background>
+                <ImageBrush ImageSource="skipbtn.png" TileMode="FlipY"/>
+            </Button.Background>
+        </Button>
+        <Label x:Name="Durationlbl" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="32,395,0,0" Foreground="White"/>
+        <Label x:Name="CurrentPosLbl" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="610,409,0,0" Foreground="White"/>
+        <Label x:Name="Volumelbl" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="634,311,0,0" Foreground="White"/>
+        <Button x:Name="Playbtn" HorizontalAlignment="Left" VerticalAlignment="Top" Width="42" Margin="201,336,0,0" Height="41" Click="PlayFile">
+            <Button.Background>
+                <ImageBrush/>
+            </Button.Background>
+            <DynamicResource ResourceKey="Play"/>
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="LightBlue" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+        <ScrollBar x:Name="SongPosBar" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="112,431,0,0" Orientation="Horizontal" Height="12" Width="472" Scroll="ScrollBar_Scroll"/>
+        <ScrollBar x:Name="Volumebar" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,266,0,0" Orientation="Horizontal" Height="22" Width="194" Maximum="100" SmallChange="1" Value="50" ValueChanged="Volumebar_ValueChanged"/>
+        <Label x:Name="Minuslbl" Content="-" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="529,258,0,0" Foreground="White" Width="16" FontSize="18" FontWeight="Bold" Height="30"/>
+        <Label x:Name="Pluslbl" Content="+" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="744,258,0,0" Foreground="White" Width="23" FontSize="18" FontWeight="Bold" Height="30" RenderTransformOrigin="1.435,1.433"/>
+        <Button x:Name="Powerbtn" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Margin="744,10,0,0" Height="30" Click="Powerbtnclick" Foreground="Black" BorderBrush="Transparent" BorderThickness="0">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.Background>
+                <ImageBrush ImageSource="chrome_TZHJrN1hfp.png" TileMode="FlipY"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Minimzebtn" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Margin="709,10,0,0" Height="30" Click="Minimizebtnclick" Foreground="Black" BorderBrush="Transparent" BorderThickness="0">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.Background>
+                <ImageBrush ImageSource="chrome_CZBmaqtdN1.png" TileMode="FlipY"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="BSkipbtn" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="39" Margin="146,342,0,0" Height="31" Click="skipbackbutton" Foreground="Black" BorderBrush="Transparent" BorderThickness="0" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.Background>
+                <ImageBrush ImageSource="skipbtn.png" TileMode="FlipY"/>
+            </Button.Background>
+        </Button>
+    </Grid>
+</Window>
